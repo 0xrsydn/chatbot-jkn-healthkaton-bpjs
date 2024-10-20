@@ -1,0 +1,12 @@
+recipe: default.v1
+language: id
+pipeline:
+- name: SingleStepLLMCommandGenerator
+  llm:
+    model_name: gpt-4o-mini
+
+policies:
+- name: FlowPolicy
+#  - name: EnterpriseSearchPolicy
+#  - name: RulePolicy
+assistant_id: 20241020-193749-sleek-mixture
