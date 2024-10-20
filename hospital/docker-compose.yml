@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  rasa:
+    build: .
+    ports:
+      - "5005:5005"  # Rasa API
+      - "5055:5055"  # Action server
+    volumes:
+      - .:/usr/src/
+    command: >
+      bash -c "rasa run --enable-api & rasa run actions"
+
+  flask:
+    build: .
+    ports:
+      - "5000:5000"  # Flask API
+    volumes:
+      - .:/usr/src/
+    command: >
+      python main.py
