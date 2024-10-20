@@ -1,0 +1,15 @@
+flows:
+  hospital_location:
+    description: This flow lets users get the nearest hospital location.
+    steps:
+      - collect: address
+        description: the address of the user / patient
+      - action: utter_address_wait
+      - action: action_check_nearest_hospital
+
+  room_availability:
+    description: This flow lets user get information of the hospital room availability.
+    steps:
+      - collect: hospital
+        description: the name of the hospital
+      - action: action_check_hospital_room_availability
