@@ -1,0 +1,57 @@
+version: "3.1"
+
+actions:
+ - action_check_nearest_hospital
+ - action_check_hospital_room_availability
+
+slots:
+  address:
+    type: text
+    mappings:
+      - type: from_llm
+  hospital:
+    type: text
+    mappings:
+      - type: from_llm
+  room_type:
+    type: text
+    mappings:
+      - type: from_llm
+
+responses:
+  utter_ask_address:
+    - text: "Bisakah anda memberi tahu domisili anda sekarang?"
+    - text: "Dimanakah alamat lengkap anda sekarang?"
+    - text: "Apa alamat lengkap Anda saat ini?"
+    - text: "Di mana Anda tinggal saat ini secara lengkap?"
+    - text: "Bisakah Anda memberikan alamat lengkap Anda saat ini?"
+    - text: "Alamat lengkap Anda sekarang berada di mana?"
+    - text: "Tolong sebutkan alamat lengkap Anda yang sekarang."
+
+  utter_ask_hospital:
+    - text: "Rumah sakit manakah yang ingin anda pesan?"
+    - text: "Di rumah sakit mana Anda ingin membuat reservasi?"
+    - text: "Rumah sakit apa yang ingin Anda pesan sekarang?"
+    - text: "Anda ingin memesan di rumah sakit yang mana?"
+    - text: "Rumah sakit mana yang ingin Anda pilih untuk pemesanan?"
+  
+  utter_ask_hospital_room_availability:
+    - text: "Rumah sakit manakah yang ingin anda ketahui ketersediaan ruangannya?"
+    - text: "Di rumah sakit mana Anda ingin mengetahui ketersediaan kamar?"
+    - text: "Anda ingin mengetahui ketersediaan ruangan di rumah sakit yang mana?"
+    - text: "Rumah sakit mana yang ingin Anda periksa terkait ketersediaan ruangannya?"
+    - text: "Di rumah sakit mana Anda ingin mengecek apakah ada ruang yang tersedia?"
+
+  utter_ask_room_type:
+    - text: "Tipe ruangan apa yang anda inginkan?"
+    - text: "Ruangan dengan tipe apa yang Anda butuhkan?"
+    - text: "Anda ingin memesan ruangan dengan tipe apa?"
+    - text: "Apa tipe ruangan yang Anda cari?"
+  
+  utter_book_confirm:
+    - text: "Pesanan ruangan telah diterima. Terimakasih."
+
+  utter_address_wait:
+    - text: "Mohon tunggu. Kami sedang mencari lokasi rumah sakit terdekat"
+    - text: "Harap tunggu, kami sedang mencari rumah sakit terdekat di lokasi Anda."
+    - text: "Mohon tunggu sebentar, kami sedang melakukan pencarian rumah sakit terdekat."
