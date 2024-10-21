@@ -3,12 +3,13 @@ language: id
 pipeline:
 - name: SingleStepLLMCommandGenerator
   llm:
-    provider: groq
-    model: llama-3.2-1b-preview
-    # model_name: gpt-4o-mini
+    provider: openai
+    model: gpt-4o-mini
+
 
 policies:
 - name: FlowPolicy
 #  - name: EnterpriseSearchPolicy
 #  - name: RulePolicy
-assistant_id: 20241020-223129-trusting-sequence
+
+assistant_id: 20241021-082830-neat-bike
