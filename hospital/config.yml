@@ -3,7 +3,9 @@ language: id
 pipeline:
 - name: SingleStepLLMCommandGenerator
   llm:
-    model_name: gpt-4o-mini
+    provider: groq
+    model: llama-3.2-1b-preview
+    # model_name: gpt-4o-mini
 
 policies:
 - name: FlowPolicy
