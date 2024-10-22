@@ -8,6 +8,9 @@ from faq import load_faq_data, initialize_retriever
 # Flask API URL for Rasa /chat/ Endpoint
 FLASK_API_URL = "http://localhost:5000/chat/"
 
+# Language Detection API URL
+FLASK_API_LANG_DETECT_URL = "http://localhost:3030/detect_lang/"
+
 # Initialize FAQ Data and Retriever
 faq_data, faq_texts = load_faq_data('data/bpjs_faq.json')
 retriever = initialize_retriever(faq_texts)
@@ -31,6 +34,14 @@ def chatbot(query, history):
         # Append each bot response one-by-one to the chat history
         for bot_response in bot_responses:
             bot_reply = bot_response.get("text", "")
+            
+            lang = requests.post(FLASK_API_LANG_DETECT_URL, json={"text" : bot_reply})
+            
+            if lang.status_code == 200:
+                lang_data = lang.json()
+                if lang_data["language"] != "id":
+                    bot_reply = None
+
             history.append((query, bot_reply))
             query = None
 
