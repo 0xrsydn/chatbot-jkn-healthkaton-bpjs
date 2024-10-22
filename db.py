@@ -1,11 +1,9 @@
 import sqlite3
 from datetime import datetime
 
-# Connect to SQLite database (or create it if it doesn't exist)
 conn = sqlite3.connect('hospital_db.sqlite')
 cursor = conn.cursor()
 
-# Create table for healthcare facility location information
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS info_lokasi_faskes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +15,6 @@ CREATE TABLE IF NOT EXISTS info_lokasi_faskes (
 )
 ''')
 
-# Create table for bed information
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS info_tempat_tidur (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,18 +29,17 @@ CREATE TABLE IF NOT EXISTS info_tempat_tidur (
 )
 ''')
 
-# Create table for booking information
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS booking (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nama_rumahsakit TEXT,
     nama_pasien TEXT,
+    gender TEXT,
     tipe_kamar TEXT,
     FOREIGN KEY (nama_rumahsakit) REFERENCES info_lokasi_faskes(nama_rs) ON DELETE CASCADE
 )
 ''')
 
-# Insert example data into info_lokasi_faskes
 cursor.execute('''
 INSERT OR IGNORE INTO info_lokasi_faskes (nama_rs, latitude, longitude, alamat, alamat2)
 VALUES 
@@ -51,7 +47,6 @@ VALUES
 ('Siloam Hospitals Balikpapan', -1.265842, 116.839379, 'Jl. MT Haryono', 'Balikpapan, East Borneo, Indonesia')
 ''')
 
-# Insert example data into info_tempat_tidur
 cursor.executemany('''
 INSERT INTO info_tempat_tidur (nama_rs, tipe_kamar, total_kamar, ketersediaan, pria, wanita, last_update)
 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -62,19 +57,37 @@ VALUES (?, ?, ?, ?, ?, ?, ?)
     ('Siloam Hospitals Balikpapan', 'Kelas 2', 15, 10, 6, 4, datetime.now())
 ])
 
-# Insert example data into booking
 cursor.executemany('''
-INSERT INTO booking (nama_rumahsakit, nama_pasien, gender,tipe_kamar)
-VALUES (?, ?, ?)
+INSERT INTO booking (nama_rumahsakit, nama_pasien, gender, tipe_kamar)
+VALUES (?, ?, ?, ?)
 ''', [
-    ('RSUD Beriman Balikpapan', 'Samsul', "Pria" ,'VIP'),
-    ('Siloam Hospitals Balikpapan', 'Lisa', "Wanita",'Suite'),
-    ('RSUD Beriman Balikpapan', 'Rachel', "Wanita",'Kelas 1'),
-    ('Siloam Hospitals Balikpapan', 'Bobi Kartanegara', "Pria",'Kelas 2')
+    ('RSUD Beriman Balikpapan', 'Samsul', "Pria", 'VIP'),
+    ('Siloam Hospitals Balikpapan', 'Lisa', "Wanita", 'Suite'),
+    ('RSUD Beriman Balikpapan', 'Rachel', "Wanita", 'Kelas 1'),
+    ('Siloam Hospitals Balikpapan', 'Bobi Kartanegara', "Pria", 'Kelas 2')
 ])
 
-# Commit changes and close the connection
 conn.commit()
+
+print("Info Lokasi Faskes Table Data:")
+cursor.execute('SELECT * FROM info_lokasi_faskes')
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+print("\nInfo Tempat Tidur Table Data:")
+cursor.execute('SELECT * FROM info_tempat_tidur')
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+print("\nBooking Table Data:")
+cursor.execute('SELECT * FROM booking')
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+
 conn.close()
 
 print("Data successfully inserted into SQLite database.")
