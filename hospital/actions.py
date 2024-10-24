@@ -15,38 +15,27 @@ class ActionCheckNearestHospital(Action):
     def haversine(lat1, lon1, lat2, lon2):
         R = 6371.0 # Earth radius in kilometers
 
-        # Convert latitude and longitude from degrees to radians
         lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
 
-        # Haversine formula
         dlat = lat2 - lat1
         dlon = lon2 - lon1
-        a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+        a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
-        # Distance in kilometers
         distance = R * c
         return distance
 
     @staticmethod
     def get_coordinate(location):
-        # Use a more specific and unique user-agent string
         geolocator = Nominatim(user_agent="my_geolocation_app")
-        
-        # Get location
         loc = geolocator.geocode(location)
-        
-        # Return the latitude and longitude
         if loc:
             return loc.latitude, loc.longitude
-        else:
-            return None, None
+        return None, None
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         
-        # Get the patient address from the user's input
         patient_addr = tracker.get_slot('address')
         
         if not patient_addr:
@@ -58,42 +47,49 @@ class ActionCheckNearestHospital(Action):
         if user_lat is None or user_lon is None:
             dispatcher.utter_message(text="Maaf, saya tidak dapat menemukan koordinat untuk alamat yang Anda berikan.")
             return []
-        
+
         try:
-            # Connect to the sqlite db
             conn = sqlite3.connect("./db/hospital_db.sqlite")
             cursor = conn.cursor()
 
-            # Query all hospital with their latitudes and longitudes
             cursor.execute("SELECT nama_rs, latitude, longitude FROM info_lokasi_faskes")
             hospitals = cursor.fetchall()
 
-            # List to hold places within the specified distance
             nearby_places = []
-
             for hospital in hospitals:
                 name, place_lat, place_lon = hospital
                 haversine_distance = self.haversine(user_lat, user_lon, place_lat, place_lon)
                 nearby_places.append((name, haversine_distance))
             
-            # Sort places by distance (ascending)
             nearby_places.sort(key=lambda x: x[1])
 
-            conn.close()
-
-            print(nearby_places)
             if nearby_places:
                 nearest_hospital, distance = nearby_places[0]
                 message = f"Rumah sakit terdekat dari lokasi Anda adalah {nearest_hospital} yang berjarak sejauh {distance:.2f} km."
                 dispatcher.utter_message(text=message)
+                
+                # Debugging log
+                print(f"Nearest hospital found: {nearest_hospital}")
+                
+                return [SlotSet("hospital", nearest_hospital)]
+                
+                # Set the slot only if the nearest hospital is valid
+                # if nearest_hospital:
+                #     return [SlotSet("hospital", nearest_hospital)]
+                # else:
+                #     dispatcher.utter_message(text="Maaf, saya tidak dapat menemukan nama rumah sakit terdekat.")
+                #     return []
             else:
-                dispatcher.utter_message(text="Maaf, saya tidak dapat menemukan rumah sakit terdekat dari lokasi Anda.")
+                dispatcher.utter_message(text="Maaf, tidak ada rumah sakit terdekat yang ditemukan.")
+                return []
 
         except sqlite3.Error as e:
             dispatcher.utter_message(text="Mohon maaf, terdapat kendala dalam mengakses database internal.")
             print(f"Database error: {e}")
+            return []
 
-        return []
+        finally:
+            conn.close()
 
 
 class ActionCheckHospitalRoomAvailability(Action):
@@ -145,4 +141,5 @@ class ActionCheckHospitalRoomAvailability(Action):
         
         return []
     
+
 
