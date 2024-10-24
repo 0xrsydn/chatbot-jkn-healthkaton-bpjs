@@ -7,9 +7,29 @@ flows:
       - action: utter_address_wait
       - action: action_check_nearest_hospital
 
+
   room_availability:
     description: This flow lets user get information of the hospital room availability.
     steps:
-      - collect: hospital
-        description: ask the name of the hospital
-      - action: action_check_hospital_room_availability
+      - noop: true
+        next:
+          - if: slots.hospital
+            then:
+              - collect: nearest_hospital_confirmation
+                ask_before_filling: true
+                next:
+                  - if: not slots.nearest_hospital_confirmation 
+                    then:
+                      - collect : hospital
+                        ask_before_filling: true
+                      - action: action_check_hospital_room_availability
+                        next: END
+                  - else: 
+                    - action: action_check_hospital_room_availability
+                      next: END
+          - else:
+              - collect: hospital
+                ask_before_filling: true
+              - action: action_check_hospital_room_availability
+                next: END
+
