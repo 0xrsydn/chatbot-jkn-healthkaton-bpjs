@@ -7,12 +7,14 @@ routing_prompt = """Given the user question below, classify the user's intention
 
 Do not respond with more than one word.
 
-`Greeting`: If the user greets you.
-`Question`: If the user asks a general question about the company.
-`Summary`: If the user specifically asks you to create a summary of the chat.
-`Farewell`: If the user says goodbye or farewell.
-`Location`: If the user asks about hospital locations.
-`No Context`: If the user’s question is unrelated to any of the categories above or lacks enough context to classify.
+Greeting: If the user greets you.
+Question: If the user asks a general question about the company.
+Summary: If the user specifically asks you to create a summary of the chat.
+Farewell: If the user says goodbye or farewell.
+Location: If the user asks about hospital locations.
+Room: If the user asks about hospital room availability.
+Chit-chat: If the user input a chit-chat.
+No Context: If the user’s question is unrelated to any of the categories above or lacks enough context to classify.
 
 <question>
 {question}
