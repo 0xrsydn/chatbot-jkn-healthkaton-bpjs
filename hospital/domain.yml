@@ -3,6 +3,18 @@ version: "3.1"
 actions:
  - action_check_nearest_hospital
  - action_check_hospital_room_availability
+ - action_list_hospital_name_based_location
+ - action_store_location_to_slot
+ - action_store_hospital_name_to_slot
+ - action_list_all_similar_hospital
+
+entities:
+  - location
+  - hospital_name
+
+intents:
+  - list_hospital_name_based_on_location
+  - list_all_room_type_in_certain_hospital
 
 slots:
   address:
@@ -21,7 +33,24 @@ slots:
     type: bool
     mappings:
       - type: from_llm
-
+  loc:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: location
+        intent: list_hospital_name_based_on_location
+  hospital_location:
+    type: text
+    mappings:
+      - type: from_llm
+  similar_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: hospital_name
+        intent: list_all_room_type_in_certain_hospital
 
 responses:
   utter_ask_address:
@@ -29,6 +58,9 @@ responses:
     - text: "Bisakah Anda memberikan alamat lengkap Anda saat ini?"
     - text: "Alamat lengkap Anda sekarang berada di mana?"
     - text: "Tolong sebutkan alamat lengkap Anda yang sekarang."
+
+  utter_ask_hospital_location:
+    - text: "Daerah manakah yang ingin anda ketahui daftar rumah sakitnya?"
 
   utter_ask_hospital_availability:
     - text: "Rumah sakit manakah yang ingin anda pesan?"
