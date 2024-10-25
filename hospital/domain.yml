@@ -7,6 +7,7 @@ actions:
  - action_store_location_to_slot
  - action_store_hospital_name_to_slot
  - action_list_all_similar_hospital
+ - action_store_hospital_name_to_slot_hospital
 
 entities:
   - location
@@ -18,6 +19,14 @@ intents:
 
 slots:
   address:
+    type: text
+    mappings:
+      - type: from_llm
+  person_name:
+    type: text
+    mappings:
+      - type: from_llm
+  gender:
     type: text
     mappings:
       - type: from_llm
@@ -51,6 +60,19 @@ slots:
       - type: from_entity
         entity: hospital_name
         intent: list_all_room_type_in_certain_hospital
+  hospital_confirm:
+    type: bool
+    mappings:
+      - type: from_llm
+  book_confirm:
+    type: bool
+    mappings:
+      - type: from_llm
+  hospital_booking:
+    type: text
+    mappings:
+      - type: from_llm
+
 
 responses:
   utter_ask_address:
@@ -62,7 +84,7 @@ responses:
   utter_ask_hospital_location:
     - text: "Daerah manakah yang ingin anda ketahui daftar rumah sakitnya?"
 
-  utter_ask_hospital_availability:
+  utter_ask_hospital_booking:
     - text: "Rumah sakit manakah yang ingin anda pesan?"
     - text: "Di rumah sakit mana Anda ingin membuat reservasi?"
     - text: "Rumah sakit mana yang ingin Anda pilih untuk pemesanan?"
@@ -77,9 +99,26 @@ responses:
     - text: "Ruangan dengan tipe apa yang Anda butuhkan?"
     - text: "Anda ingin memesan ruangan dengan tipe apa?"
     - text: "Apa tipe ruangan yang Anda cari?"
+
+  utter_ask_person_name:
+    - text: "Pemesanan ruangan atas nama siapa?"
+
+  utter_ask_gender:
+    - text: "Apakah gender anda? (Pria/Wanita)"
+
+  utter_ask_book_confirm:
+    - text: "Pemesanan ruang {room_type} atas nama {person_name} berjenis kelamin {gender} di rumah sakit {hospital} telah diterima. Apakah detail sudah benar?"
+      buttons:
+        - payload: "Ya"
+          title: "Yes"
+        - payload: "Tidak"
+          title: "No"
   
-  utter_book_confirm:
-    - text: "Pesanan ruangan telah diterima. Terimakasih."
+  utter_booking_success:
+    - text: "Pemesanan telah diterima. Mohon segera mendatangi rumah sakit bersangkutan dalam 1x24 jam untuk melakukan konfirmasi. Terimakasih."
+
+  utter_booking_cancel:
+    - text: "Pemesanan anda di rumah sakit {hospital} dibatalkan."
 
   utter_address_wait:
     - text: "Mohon tunggu. Kami sedang mencari lokasi rumah sakit terdekat."
@@ -88,6 +127,14 @@ responses:
 
   utter_ask_nearest_hospital_confirmation:
     - text: "Saya menemukan rumah sakit terdekat: {hospital}. Apakah ini yang Anda cari?"
+      buttons:
+        - payload: "Ya"
+          title: "Yes"
+        - payload: "Tidak"
+          title: "No"
+
+  utter_ask_hospital_confirm:
+    - text: "Apakah anda ingin memesan ruangan di rumah sakit {hospital}?"
       buttons:
         - payload: "Ya"
           title: "Yes"
