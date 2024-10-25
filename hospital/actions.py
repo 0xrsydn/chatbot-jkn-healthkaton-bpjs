@@ -176,7 +176,26 @@ class ActionStoreHospitalNameToSlot(Action):
                 break
 
         return [SlotSet("similar_name", hospital_name)]
+
+
+class ActionStoreHospitalNameToSlotHospital(Action):
+    def name(self) -> Text:
+        return "action_store_hospital_name_to_slot_hospital"
     
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Try to get hospital name from entities in latest message
+        hospital_name = None
+
+        # Extract hospital name from entities
+        for entity in tracker.latest_message.get('entities', []):
+            if entity['entity'] == 'hospital_name':
+                hospital_name = entity["value"]
+                break
+
+        return [SlotSet("hospital", hospital_name)]
 
 class ActionListSimilarHospitalName(Action):
     def name(self) -> Text:
