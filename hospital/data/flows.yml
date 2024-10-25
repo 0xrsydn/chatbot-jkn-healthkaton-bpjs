@@ -53,6 +53,77 @@ flows:
               next: END
 
 
+  hospital_room_booking:
+    description: This flow lets user to book hospital room.
+    nlu_trigger:
+      - intent: hotel_room_booking
+    steps:
+      - action: action_store_hospital_name_to_slot_hospital
+      - noop: true
+        next:
+          - if: slots.hospital
+            then:
+              - collect: hospital_confirm
+                ask_before_filling: true
+                next:
+                  - if: not slots.hospital_confirm
+                    then:
+                      - collect: hospital_booking
+                        ask_before_filling: true
+                      - collect: person_name
+                        ask_before_filling: true
+                      - collect: gender
+                        ask_before_filling: true
+                      - collect: room_type
+                        ask_before_filling: true
+                      - collect: book_confirm
+                        ask_before_filling: true
+                        next:
+                          - if: not slots.book_confirm
+                            then: 
+                              - action: utter_booking_cancel
+                                next: END
+                          - else:
+                              - action: utter_booking_success
+                                next: END
+                  - else:
+                      - collect: person_name
+                        ask_before_filling: true
+                      - collect: gender
+                        ask_before_filling: true
+                      - collect: room_type
+                        ask_before_filling: true
+                      - collect: book_confirm
+                        ask_before_filling: true
+                        next:
+                          - if: not slots.book_confirm
+                            then: 
+                              - action: utter_booking_cancel
+                                next: END
+                          - else:
+                              - action: utter_booking_success
+                                next: END
+          - else:
+              - collect: hospital_booking
+                ask_before_filling: true
+              - collect: person_name
+                ask_before_filling: true
+              - collect: gender
+                ask_before_filling: true
+              - collect: room_type
+                ask_before_filling: true
+              - collect: book_confirm
+                ask_before_filling: true
+                next:
+                  - if: not slots.book_confirm
+                    then: 
+                      - action: utter_booking_cancel
+                        next: END
+                  - else:
+                      - action: utter_booking_success
+                        next: END
+
+
   room_availability_hospital_name:
     description: This flow lets user to get information of room availability based on similar hospital name asked by user for certain location.
     nlu_trigger:
@@ -90,3 +161,4 @@ flows:
                         ask_before_filling: true
                       - action: action_list_all_similar_hospital
                         next: END 
+
