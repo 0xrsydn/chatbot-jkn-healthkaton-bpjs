@@ -1,11 +1,13 @@
 import sqlite3
 import math
 import pandas as pd
+from rapidfuzz import process
 from geopy.geocoders import Nominatim
-from typing import Any, Text, Dict, List
+from typing import Any, Coroutine, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
+from rasa_sdk.types import DomainDict
 
 class ActionCheckNearestHospital(Action):
     def name(self) -> Text:
@@ -73,12 +75,6 @@ class ActionCheckNearestHospital(Action):
                 
                 return [SlotSet("hospital", nearest_hospital)]
                 
-                # Set the slot only if the nearest hospital is valid
-                # if nearest_hospital:
-                #     return [SlotSet("hospital", nearest_hospital)]
-                # else:
-                #     dispatcher.utter_message(text="Maaf, saya tidak dapat menemukan nama rumah sakit terdekat.")
-                #     return []
             else:
                 dispatcher.utter_message(text="Maaf, tidak ada rumah sakit terdekat yang ditemukan.")
                 return []
@@ -142,4 +138,149 @@ class ActionCheckHospitalRoomAvailability(Action):
         return []
     
 
+class ActionStoreLocationEntityToSlot(Action):
+    def name(self) -> Text:
+        return "action_store_location_to_slot"
+    
+    def run(self, dispatcher: CollectingDispatcher, 
+            tracker: Tracker, 
+            domain:  Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Try to get location from entities in latest message
+        location = None
 
+        # Extract location from entities
+        for entity in tracker.latest_message.get('entities', []):
+            if entity['entity'] == 'location':
+                location = entity["value"]
+                break
+        
+        return [SlotSet("loc", location)]
+
+
+class ActionStoreHospitalNameToSlot(Action):
+    def name(self) -> Text:
+        return "action_store_hospital_name_to_slot"
+    
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Try to get hospital name from entities in latest message
+        hospital_name = None
+
+        # Extract hospital name from entities
+        for entity in tracker.latest_message.get('entities', []):
+            if entity['entity'] == 'hospital_name':
+                hospital_name = entity["value"]
+                break
+
+        return [SlotSet("similar_name", hospital_name)]
+    
+
+class ActionListSimilarHospitalName(Action):
+    def name(self) -> Text:
+        return "action_list_all_similar_hospital"
+    
+    def run(self, dispatcher: CollectingDispatcher, 
+            tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Get location from slot
+        addr = tracker.get_slot('address')
+        if not addr:
+            message = "Untuk mendapatkan informasi rumah sakit yang anda maksud, \
+                kami membutuhkan informasi lokasi anda, \
+                bisakah anda memberikan alamat domisili anda sekarang?"
+            dispatcher.utter_message(text=message)
+            return []
+        
+        # Get hospital from slot
+        hospital = tracker.get_slot('similar_name')
+        if not hospital:
+            message = "Rumah sakit yang anda cari sepertinya belum terdaftar dalam sistem kami."
+            dispatcher.utter_message(text=message)
+            return []
+        
+        # Debug logging
+        print(f"Hospital from entity: {hospital}")
+        print(f"Address from entity: {addr}")
+        print(f"Latest message: {tracker.latest_message}")
+
+
+        # Connect to SQLite database
+        conn = sqlite3.connect("./db/hospital_db.sqlite")
+        cursor = conn.cursor()
+
+        # Query to retrieve all hospitals and their addresses
+        query = "SELECT nama_rs, alamat || ' ' || alamat2 AS full_address FROM info_lokasi_faskes"
+        cursor.execute(query)
+        all_hospitals = cursor.fetchall()
+
+        # Close the connection
+        conn.close()
+
+        # Use rapidfuzz to get the best matches based on similarity
+        hospital_names = [result[0] for result in all_hospitals]
+        matches = process.extract(hospital, hospital_names, score_cutoff=70)
+        
+        if matches:
+            matched_hospitals = [match[0] for match in matches]
+            message = f"Berikut ini adalah rumah sakit yang mirip dengan '{hospital}' di sekitar {addr}: " + ", ".join(matched_hospitals)
+        else:
+            message = "Tidak ditemukan rumah sakit di lokasi tersebut yang mirip dengan nama yang diberikan."
+
+        # Send response to the user
+        dispatcher.utter_message(text=message)
+    
+
+class ActionListHospitalNameBasedLocation(Action):
+    def name(self) -> Text:
+        return "action_list_hospital_name_based_location"
+    
+    def run(self, dispatcher: CollectingDispatcher, 
+            tracker: Tracker, 
+            domain:  Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Try to get location from entities in latest message
+        location = None
+
+        # Extract location from entities
+        for entity in tracker.latest_message.get('entities', []):
+            if entity['entity'] == 'location':
+                location = entity["value"]
+                break
+        
+        # Debug logging
+        print(f"Location from entity: {location}")
+        print(f"Latest message: {tracker.latest_message}")
+        print(f"Current slots: {tracker.slots}")
+        
+        if not location:
+            dispatcher.utter_message(text="Mohon maaf, rumah sakit di lokasi tersebut belum tersedia atau belum terdaftar.")
+            return []
+
+        # Connect to SQLite database
+        conn = sqlite3.connect("./db/hospital_db.sqlite")
+        cursor = conn.cursor()
+
+        # Query for similar hospital names
+        query = """SELECT nama_rs, alamat || ' ' || alamat2 AS full_address
+        FROM info_lokasi_faskes 
+        WHERE (alamat || ' ' || alamat2) LIKE ?"""
+        cursor.execute(query, ('%' + location + '%',))
+        results = cursor.fetchall()
+
+        # Format the result
+        if results:
+            hospital_list = [result[0] for result in results]
+            message = f"""Berikut ini adalah rumah sakit yang berada di {location}: """ + ", ".join(hospital_list)
+        else:
+            message = "Tidak ditemukan rumah sakit di lokasi tersebut."
+
+        # Send response to the user
+        dispatcher.utter_message(text=message)
+
+        # Close the connection
+        conn.close()
+        
+        return [SlotSet("loc", location)]
