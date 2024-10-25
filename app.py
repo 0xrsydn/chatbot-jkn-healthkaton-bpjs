@@ -10,6 +10,8 @@ retriever = initialize_retriever(faq_texts)
 def chatbot(query, history):
     intent = classify_query(query)
 
+    print("intent: ", intent)
+
     response = handle_intent(intent, query, retriever)
     
     history.append((query, response))
