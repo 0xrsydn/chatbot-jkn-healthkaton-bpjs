@@ -17,10 +17,39 @@ retriever = initialize_retriever(faq_texts)
 
 def chatbot(query, history):
     intent = classify_query(query)
+    if intent == "location":
+        try:
+            # Check the user query to the FLASK API (which calls Rasa)
+            response = requests.post(FLASK_API_URL, json={"message": query})
 
-    response = handle_intent(intent, query, retriever)
-    
-    history.append((query, response))
+            # Check if the response is successful
+            if response.status_code == 200:
+                bot_responses = response.json() # List of bot responses
+            else:
+                bot_responses = [{"text" : "Maaf, Bot terdapat kendala. Mohon coba lagi untuk beberapa saat. Terimakasih."}]
+        
+        except Exception as e:
+            bot_responses = [{"text" : "Maaf, Bot terdapat kendala. Mohon coba lagi untuk beberapa saat. Terimakasih."}]
+
+        # Append each bot response one-by-one to the chat history
+        for bot_response in bot_responses:
+            bot_reply = bot_response.get("text", "")
+            
+            lang = requests.post(FLASK_API_LANG_DETECT_URL, json={"text" : bot_reply})
+            
+            if lang.status_code == 200:
+                lang_data = lang.json()
+                if lang_data["language"] != "id":
+                    bot_reply = None
+
+            history.append((query, bot_reply))
+            query = None
+
+            time.sleep(1)
+    else:        
+        response = handle_intent(intent, query, retriever)
+        
+        history.append((query, response))
     return history, ""
 
 with gr.Blocks() as demo:
