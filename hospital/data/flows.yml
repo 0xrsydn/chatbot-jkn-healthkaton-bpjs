@@ -7,9 +7,86 @@ flows:
       - action: utter_address_wait
       - action: action_check_nearest_hospital
 
+
   room_availability:
     description: This flow lets user get information of the hospital room availability.
     steps:
-      - collect: hospital
-        description: ask the name of the hospital
-      - action: action_check_hospital_room_availability
+      - noop: true
+        next:
+          - if: slots.hospital
+            then:
+              - collect: nearest_hospital_confirmation
+                ask_before_filling: true
+                next:
+                  - if: not slots.nearest_hospital_confirmation 
+                    then:
+                      - collect : hospital
+                        ask_before_filling: true
+                      - action: action_check_hospital_room_availability
+                        next: END
+                  - else: 
+                    - action: action_check_hospital_room_availability
+                      next: END
+          - else:
+              - collect: hospital
+                ask_before_filling: true
+              - action: action_check_hospital_room_availability
+                next: END
+
+
+  list_hospital_name_loc:
+    description: This flow lets user to get information of all possible hospital name based on location asked by the user.
+    nlu_trigger:
+      - intent: list_hospital_name_based_on_location
+    steps:
+      - action: action_store_location_to_slot
+      - noop: true
+        next:
+          - if: slots.loc
+            then:
+              - action: action_list_hospital_name_based_location
+                next: END
+          - else:
+            - collect: hospital_location
+              ask_before_filling: true
+            - action: action_list_hospital_name_based_location
+              next: END
+
+
+  room_availability_hospital_name:
+    description: This flow lets user to get information of room availability based on similar hospital name asked by user for certain location.
+    nlu_trigger:
+      - intent: list_all_room_type_in_certain_hospital
+    steps:
+      - action: action_store_hospital_name_to_slot
+      - noop: true
+        next:
+          - if: slots.similar_name
+            then:
+              - noop: true
+                next:
+                  - if: slots.address
+                    then: 
+                      - action: action_list_all_similar_hospital
+                        next: END
+                  - else:
+                      - collect: address
+                        ask_before_filling: true
+                      - action: action_list_all_similar_hospital
+                        next: END
+          - else:
+              - noop: true
+                next:
+                  - if: slots.address
+                    then:
+                      - collect: hospital
+                        ask_before_filling: true
+                      - action: action_list_all_similar_hospital
+                        next: END
+                  - else:
+                      - collect: address
+                        ask_before_filling: true
+                      - collect: hospital
+                        ask_before_filling: true
+                      - action: action_list_all_similar_hospital
+                        next: END 

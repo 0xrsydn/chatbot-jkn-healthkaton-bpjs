@@ -3,6 +3,18 @@ version: "3.1"
 actions:
  - action_check_nearest_hospital
  - action_check_hospital_room_availability
+ - action_list_hospital_name_based_location
+ - action_store_location_to_slot
+ - action_store_hospital_name_to_slot
+ - action_list_all_similar_hospital
+
+entities:
+  - location
+  - hospital_name
+
+intents:
+  - list_hospital_name_based_on_location
+  - list_all_room_type_in_certain_hospital
 
 slots:
   address:
@@ -17,28 +29,46 @@ slots:
     type: text
     mappings:
       - type: from_llm
+  nearest_hospital_confirmation:
+    type: bool
+    mappings:
+      - type: from_llm
+  loc:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: location
+        intent: list_hospital_name_based_on_location
+  hospital_location:
+    type: text
+    mappings:
+      - type: from_llm
+  similar_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: hospital_name
+        intent: list_all_room_type_in_certain_hospital
 
 responses:
   utter_ask_address:
     - text: "Bisakah anda memberi tahu domisili anda sekarang?"
-    - text: "Dimanakah alamat lengkap anda sekarang?"
-    - text: "Apa alamat lengkap Anda saat ini?"
-    - text: "Di mana Anda tinggal saat ini secara lengkap?"
     - text: "Bisakah Anda memberikan alamat lengkap Anda saat ini?"
     - text: "Alamat lengkap Anda sekarang berada di mana?"
     - text: "Tolong sebutkan alamat lengkap Anda yang sekarang."
 
-  utter_ask_hospital:
+  utter_ask_hospital_location:
+    - text: "Daerah manakah yang ingin anda ketahui daftar rumah sakitnya?"
+
+  utter_ask_hospital_availability:
     - text: "Rumah sakit manakah yang ingin anda pesan?"
     - text: "Di rumah sakit mana Anda ingin membuat reservasi?"
-    - text: "Rumah sakit apa yang ingin Anda pesan sekarang?"
-    - text: "Anda ingin memesan di rumah sakit yang mana?"
     - text: "Rumah sakit mana yang ingin Anda pilih untuk pemesanan?"
   
-  utter_ask_hospital_room_availability:
+  utter_ask_hospital:
     - text: "Rumah sakit manakah yang ingin anda ketahui ketersediaan ruangannya?"
-    - text: "Di rumah sakit mana Anda ingin mengetahui ketersediaan kamar?"
-    - text: "Anda ingin mengetahui ketersediaan ruangan di rumah sakit yang mana?"
     - text: "Rumah sakit mana yang ingin Anda periksa terkait ketersediaan ruangannya?"
     - text: "Di rumah sakit mana Anda ingin mengecek apakah ada ruang yang tersedia?"
 
@@ -52,6 +82,17 @@ responses:
     - text: "Pesanan ruangan telah diterima. Terimakasih."
 
   utter_address_wait:
-    - text: "Mohon tunggu. Kami sedang mencari lokasi rumah sakit terdekat"
+    - text: "Mohon tunggu. Kami sedang mencari lokasi rumah sakit terdekat."
     - text: "Harap tunggu, kami sedang mencari rumah sakit terdekat di lokasi Anda."
     - text: "Mohon tunggu sebentar, kami sedang melakukan pencarian rumah sakit terdekat."
+
+  utter_ask_nearest_hospital_confirmation:
+    - text: "Saya menemukan rumah sakit terdekat: {hospital}. Apakah ini yang Anda cari?"
+      buttons:
+        - payload: "Ya"
+          title: "Yes"
+        - payload: "Tidak"
+          title: "No"
+
+  utter_check_current_hospital:
+    - text: "Anda telah memilih rumah sakit {hospital}. Apakah Anda ingin melanjutkan untuk memeriksa ketersediaan ruangannya?"

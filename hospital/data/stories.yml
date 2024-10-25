@@ -1,0 +1,18 @@
+version: "3.1"
+stories:
+- story: hospital location search
+  steps:
+  - intent: list_hospital_name_based_on_location
+    entities:
+    - location: "Jakarta"
+  - slot_was_set:
+    - loc: "Jakarta"
+  - action: action_list_hospital_name_based_location
+- story: room type search based on hospital name
+  steps:
+  - intent: list_all_room_type_in_certain_hospital
+    entities:
+    - hospital_name: "Siloam Hospital"
+  - slot_was_set:
+    - similar_name: "Siloam Hospital"
+  - action: 

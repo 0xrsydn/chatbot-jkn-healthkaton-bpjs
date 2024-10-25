@@ -1,0 +1,6 @@
+version: "3.1"
+stories:
+- story: list hospital based on location
+  steps:
+  - intent: list_hospital_name_based_on_location
+  - action: action_list_hospital_name_based_location

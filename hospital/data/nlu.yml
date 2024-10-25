@@ -1,0 +1,30 @@
+version: "3.1"
+
+nlu:
+  - intent: list_hospital_name_based_on_location
+    examples: |
+      - Rumah sakit yang ada di [Jakarta](location)
+      - Rumah sakit mana saja yang ada di [Bekasi](location)?
+      - Tampilkan seluruh rumah sakit yang berada di [Bandung](location).
+      - Bisa berikan daftar rumah sakit yang ada di daerah [Semarang](location)?
+      - Rumah sakit di [Balikpapan](location)
+      - Saya butuh daftar rumah sakit di [Surabaya](location)
+      - Apa rumah sakit yang terdekat di [Medan](location)?
+      - rs di [Jakarta](location)
+      - daftar rs [Bekasi](location)
+      - rumah sakit daerah [Jakarta](location)
+      - RS sekitar [Jakarta](location)
+      - Cari rs di [Jakarta](location)
+      - daftar RSUD di [Surabaya](location)
+      - RSUD di [Bandung](location)
+      - check rsud di [Bandung](location)
+      - apa saja rsud di [Tangerang](location)?
+      - Sebutkan semua RSUD di [Cisarua](location)
+  - intent: list_all_room_type_in_certain_hospital
+    examples: |
+      - Apa saja tipe ruangan yang anda sediakan di [Rumah Sakit Siloam](hospital_name)?
+      - Bisakah anda mendaftar semua tipe ruangan yang ada di [RS Islam](hospital_name)?
+      - Apa saja ruangan yang tersedia di [RS Abdi Waluyo](hospital_name)?
+      - Kasih tahu saya tipe ruangan yang ada di [RS Pondok Indah](hospital_name).
+      - Apakah masih tersedia kamar di [RS Cipto Mangunkusumo](hospital_name)?
+      - Kamar yang tersedia di [RSUD Islam Jakarta](hospital_name) apa?
