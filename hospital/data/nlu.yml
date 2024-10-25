@@ -13,11 +13,18 @@ nlu:
       - rs di [Jakarta](location)
       - daftar rs [Bekasi](location)
       - rumah sakit daerah [Jakarta](location)
-      - rs sekitar [Jakarta](location)
-      - cari rs di [Jakarta](location)
+      - RS sekitar [Jakarta](location)
+      - Cari rs di [Jakarta](location)
+      - daftar RSUD di [Surabaya](location)
+      - RSUD di [Bandung](location)
+      - check rsud di [Bandung](location)
+      - apa saja rsud di [Tangerang](location)?
+      - Sebutkan semua RSUD di [Cisarua](location)
   - intent: list_all_room_type_in_certain_hospital
     examples: |
       - Apa saja tipe ruangan yang anda sediakan di [Rumah Sakit Siloam](hospital_name)?
       - Bisakah anda mendaftar semua tipe ruangan yang ada di [RS Islam](hospital_name)?
       - Apa saja ruangan yang tersedia di [RS Abdi Waluyo](hospital_name)?
       - Kasih tahu saya tipe ruangan yang ada di [RS Pondok Indah](hospital_name).
+      - Apakah masih tersedia kamar di [RS Cipto Mangunkusumo](hospital_name)?
+      - Kamar yang tersedia di [RSUD Islam Jakarta](hospital_name) apa?
