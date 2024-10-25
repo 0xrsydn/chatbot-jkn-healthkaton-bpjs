@@ -1,7 +1,15 @@
 import gradio as gr
+import requests
+import time
 from routing import classify_query
 from handlers import handle_intent
 from faq import load_faq_data, initialize_retriever
+
+# Flask API URL for Rasa /chat/ Endpoint
+FLASK_API_URL = "http://localhost:5000/chat/"
+
+# Language Detection API URL
+FLASK_API_LANG_DETECT_URL = "http://localhost:3030/detect_lang/"
 
 # Initialize FAQ Data and Retriever
 faq_data, faq_texts = load_faq_data('data/bpjs_faq.json')
@@ -9,8 +17,6 @@ retriever = initialize_retriever(faq_texts)
 
 def chatbot(query, history):
     intent = classify_query(query)
-
-    print("intent: ", intent)
 
     response = handle_intent(intent, query, retriever)
     

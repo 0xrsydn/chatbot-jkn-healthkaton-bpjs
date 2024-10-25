@@ -1,4 +1,4 @@
-# **JKN Rasa Endpoint**
+# **Rasa Endpoint**
 
 The **JKN (Jaminan Kesehatan Nasional)** chat endpoint is built with **Rasa CALM** (Conversational AI with Language Model). It leverages a **Large Language Model (LLM)** along with conversational flows to create a robust **Conversational Experience (CX)** for the JKN chatbot.
 
