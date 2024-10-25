@@ -12,13 +12,16 @@ def handle_nocontext():
 def handle_location():
     return "Locations Hospital"
 
+## Todo: create history chat local storage
 def handle_faq(query, retriever):
     # Retrieve context from FAQ and call Groq to generate response
     context = retriever.get_relevant_documents(query)
+    print(context)
     faq_prompt_template = """Answer the question based only on the following context:
     {context}
 
     Question: {question}
+
     Answer:"""
     faq_prompt = faq_prompt_template.format(context=context, question=query)
     return call_groq_llm(faq_prompt)
