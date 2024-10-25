@@ -11,13 +11,17 @@ FLASK_API_URL = "http://localhost:5000/chat/"
 # Language Detection API URL
 FLASK_API_LANG_DETECT_URL = "http://localhost:3030/detect_lang/"
 
+# Language Translation API URL
+FLASK_API_LANG_TRANSLATION_URL = "http://127.0.0.1:1010/translate/"
+
 # Initialize FAQ Data and Retriever
 faq_data, faq_texts = load_faq_data('data/bpjs_faq.json')
 retriever = initialize_retriever(faq_texts)
 
 def chatbot(query, history):
     intent = classify_query(query)
-    if intent == "location":
+    print(intent)
+    if intent != "question" and intent != "summary":
         try:
             # Check the user query to the FLASK API (which calls Rasa)
             response = requests.post(FLASK_API_URL, json={"message": query})
@@ -40,7 +44,8 @@ def chatbot(query, history):
             if lang.status_code == 200:
                 lang_data = lang.json()
                 if lang_data["language"] != "id":
-                    bot_reply = None
+                    translation = requests.post(FLASK_API_LANG_TRANSLATION_URL, json={"query" : bot_reply, "src_lang": lang_data["language"], "target_lang": "id"}).json()
+                    bot_reply = translation['translation']['text']
 
             history.append((query, bot_reply))
             query = None
