@@ -25,12 +25,9 @@ pipeline:
 policies:
 - name: FlowPolicy
 #  - name: EnterpriseSearchPolicy
-# - name: RulePolicy
-
 - name: MemoizationPolicy
 - name: TEDPolicy
   max_history: 5
   epochs: 200
 - name: RulePolicy
-
-assistant_id: 20241025-014428-ascent-brass
+assistant_id: 20241025-070106-many-photometry
