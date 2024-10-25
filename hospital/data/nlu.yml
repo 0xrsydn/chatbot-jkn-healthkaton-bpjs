@@ -28,3 +28,12 @@ nlu:
       - Kasih tahu saya tipe ruangan yang ada di [RS Pondok Indah](hospital_name).
       - Apakah masih tersedia kamar di [RS Cipto Mangunkusumo](hospital_name)?
       - Kamar yang tersedia di [RSUD Islam Jakarta](hospital_name) apa?
+  - intent: hotel_room_booking
+    examples: |
+      - Saya ingin memesan kamar rumah sakit, apakah bisa?
+      - Bisakah saya melakukan reservasi kamar rumah sakit?
+      - Bisakah saya booking kamar di rumah sakit sekarang?
+      - Ibu saya sedang sakit, apakah saya bisa memesan kamar di [RSUD Islam Jakarta](hospital_name)?
+      - Apakah memungkinkan bagi saya untuk memesan kamar di [RS Dr. Sardjito](hospital_name)?
+      - Apakah tersedia kamar yang bisa saya pesan di [rs siloam](hospital_name)?
+      - Apakah memungkinkan bagi saya untuk memesan kamar di [RS Siloam Agora](hospital_name)?
