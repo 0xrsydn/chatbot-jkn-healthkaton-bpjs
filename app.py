@@ -52,7 +52,7 @@ def chatbot(query, history):
 
             time.sleep(1)
     else:        
-        response = handle_intent(intent, query, retriever)
+        response = handle_intent(intent, query, retriever, history)
         
         history.append((query, response))
     return history, ""

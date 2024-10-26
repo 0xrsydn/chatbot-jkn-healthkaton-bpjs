@@ -13,20 +13,28 @@ def handle_location():
     return "Locations Hospital"
 
 ## Todo: create history chat local storage
-def handle_faq(query, retriever):
+def handle_faq(query, retriever, history):
     # Retrieve context from FAQ and call Groq to generate response
     context = retriever.get_relevant_documents(query)
     print(context)
-    faq_prompt_template = """Answer the question based only on the following context:
+    chat_history_text = "\n".join([f"User: {q}\nBot: {a}" for q, a in history])
+    faq_prompt_template = """You are a helpful assistant for BPJS. Here is the previous chat history:
+    {chat_history}
+
+    Based on the following FAQ context:
     {context}
 
     Question: {question}
 
     Answer:"""
-    faq_prompt = faq_prompt_template.format(context=context, question=query)
+    faq_prompt = faq_prompt_template.format(
+        chat_history=chat_history_text,
+        context=context,
+        question=query
+    )
     return call_groq_llm(faq_prompt)
 
-def handle_intent(intent, query, retriever):
+def handle_intent(intent, query, retriever, history):
     if intent == 'greeting':
         return handle_greeting()
     elif intent == 'farewell':
@@ -34,7 +42,7 @@ def handle_intent(intent, query, retriever):
     elif intent == 'location':
         return handle_location()
     elif intent == 'question':
-        return handle_faq(query, retriever)
+        return handle_faq(query, retriever, history)
     elif intent == 'no context':
         return handle_nocontext()
     else:
