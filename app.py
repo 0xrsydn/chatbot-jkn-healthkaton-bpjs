@@ -18,7 +18,10 @@ FLASK_API_LANG_TRANSLATION_URL = "http://127.0.0.1:1010/translate/"
 faq_data, faq_texts = load_faq_data('data/bpjs_faq.json')
 retriever = initialize_retriever(faq_texts)
 
-def chatbot(query, history):
+def chatbot(query, history, reset=False):
+    if reset:
+        return [], ""
+    
     intent = classify_query(query)
     print(intent)
     if intent != "question" and intent != "summary":
@@ -62,8 +65,10 @@ with gr.Blocks() as demo:
     with gr.Row():
         user_input = gr.Textbox(label="Enter your question here")
         send_button = gr.Button("Send")
+        reset_button = gr.Button("Reset Chat")
     
     send_button.click(chatbot, [user_input, chatbot_ui], [chatbot_ui, user_input])
+    reset_button.click(lambda: chatbot(None, None, reset=True), outputs=[chatbot_ui, user_input])
 
 if __name__ == "__main__":
     demo.launch()
