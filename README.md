@@ -8,6 +8,6 @@
    bash run.sh
    ```
 3. Tunggu sampai instalasi dockernya selesai.
-4. Buka url gradio dan coba chatbotnya
+4. Buka url gradio dan coba chatbotnya.
 
 
