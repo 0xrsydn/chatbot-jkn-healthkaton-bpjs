@@ -197,6 +197,20 @@ class ActionStoreHospitalNameToSlotHospital(Action):
 
         return [SlotSet("hospital", hospital_name)]
 
+
+class ActionStoreAddressToSlot(Action):
+    def name(self) -> Text:
+        return "action_store_address_to_slot"
+    
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        addr = tracker.get_slot('address')
+        
+        return [SlotSet("loc", addr)]
+    
+
 class ActionListSimilarHospitalName(Action):
     def name(self) -> Text:
         return "action_list_all_similar_hospital"
