@@ -48,7 +48,7 @@ def chatbot(query, history, reset=False):
                 lang_data = lang.json()
                 if lang_data["language"] != "id":
                     translation = requests.post(FLASK_API_LANG_TRANSLATION_URL, json={"query" : bot_reply, "src_lang": lang_data["language"], "target_lang": "id"}).json()
-                    bot_reply = translation['translation']['text']
+                    bot_reply = translation['translated_text']
 
             history.append((query, bot_reply))
             query = None
