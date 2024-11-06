@@ -8,6 +8,7 @@ actions:
  - action_store_hospital_name_to_slot
  - action_list_all_similar_hospital
  - action_store_hospital_name_to_slot_hospital
+ - action_store_address_to_slot
 
 entities:
   - location
@@ -107,7 +108,7 @@ responses:
     - text: "Apakah gender anda? (Pria/Wanita)"
 
   utter_ask_book_confirm:
-    - text: "Pemesanan ruang {room_type} atas nama {person_name} berjenis kelamin {gender} di rumah sakit {hospital} telah diterima. Apakah detail sudah benar?"
+    - text: "Pemesanan ruang {room_type} atas nama {person_name} berjenis kelamin {gender} di rumah sakit {hospital_booking} telah diterima. Apakah detail sudah benar?"
       buttons:
         - payload: "Ya"
           title: "Yes"
@@ -118,7 +119,7 @@ responses:
     - text: "Pemesanan telah diterima. Mohon segera mendatangi rumah sakit bersangkutan dalam 1x24 jam untuk melakukan konfirmasi. Terimakasih."
 
   utter_booking_cancel:
-    - text: "Pemesanan anda di rumah sakit {hospital} dibatalkan."
+    - text: "Pemesanan anda di rumah sakit {hospital_confirm} dibatalkan."
 
   utter_address_wait:
     - text: "Mohon tunggu. Kami sedang mencari lokasi rumah sakit terdekat."
@@ -126,7 +127,7 @@ responses:
     - text: "Mohon tunggu sebentar, kami sedang melakukan pencarian rumah sakit terdekat."
 
   utter_ask_nearest_hospital_confirmation:
-    - text: "Saya menemukan rumah sakit terdekat: {hospital}. Apakah ini yang Anda cari?"
+    - text: "Apakah {hospital} yang anda maksud?"
       buttons:
         - payload: "Ya"
           title: "Yes"
@@ -134,7 +135,7 @@ responses:
           title: "No"
 
   utter_ask_hospital_confirm:
-    - text: "Apakah anda ingin memesan ruangan di rumah sakit {hospital}?"
+    - text: "Apakah anda ingin memesan ruangan di rumah sakit {hospital_confirm}?"
       buttons:
         - payload: "Ya"
           title: "Yes"
