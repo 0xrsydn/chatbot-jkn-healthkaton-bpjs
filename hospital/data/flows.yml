@@ -1,15 +1,19 @@
 flows:
   hospital_location:
     description: This flow lets users get the nearest hospital location.
+    nlu_trigger:
+      - intent: ask_nearest_hospital
     steps:
       - collect: address
-        description: ask the address of the user / patient
+        description: ask the address of the user.
+      - action: action_store_address_to_slot
       - action: utter_address_wait
       - action: action_check_nearest_hospital
 
-
   room_availability:
     description: This flow lets user get information of the hospital room availability.
+    nlu_trigger:
+      - intent: ask_hotel_room_availability
     steps:
       - noop: true
         next:
