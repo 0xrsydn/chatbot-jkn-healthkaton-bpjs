@@ -1,6 +1,22 @@
 version: "3.1"
 
 nlu:
+  - intent: ask_nearest_hospital
+    examples: |
+      - Di rumah sakit terdekat
+      - Dimanakah rumah sakit terdekat dari lokasi saya saat ini?
+      - Dimanakah letak rumah sakit terdekat?
+      - Dimana lokasi rumah sakit paling dekat?
+      - Lokasi rs terdekat dimana?
+      - Lokasi RS terdekat berada dimana?
+      - di rumah sakit paling dekat dengan rumah saya
+  - intent: ask_hotel_room_availability
+    examples: |
+      - Apakah masih tersedia ruangan?
+      - Apakah masih ada ruangan yang tersedia??
+      - Masih adakah ruangan di rumah sakit tersebut?
+      - Apakah ruangan tersedia saat ini?
+      - Apakah ketersediaan ruangan masih ada?
   - intent: list_hospital_name_based_on_location
     examples: |
       - Rumah sakit yang ada di [Jakarta](location)
