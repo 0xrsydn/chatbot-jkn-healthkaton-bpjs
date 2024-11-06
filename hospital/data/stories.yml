@@ -15,4 +15,4 @@ stories:
     - hospital_name: "Siloam Hospital"
   - slot_was_set:
     - similar_name: "Siloam Hospital"
-  - action: 
+  - action: action_list_all_similar_hospital

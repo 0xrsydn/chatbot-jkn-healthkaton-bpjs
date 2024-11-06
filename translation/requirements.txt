@@ -1,5 +1,4 @@
 Flask
 Werkzeug==2.2.2
-groq
-pydantic
-python-decouple
+openai==0.28
+python-dotenv

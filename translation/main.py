@@ -1,8 +1,14 @@
 from flask import Flask, request, jsonify
-from groq_translation import groq_translate
 import os
+import openai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+
+# Set OpenAI API Key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route('/translate/', methods=['POST'])
 def translate_text():
@@ -17,9 +23,17 @@ def translate_text():
         return jsonify({"error": "Missing required parameters"}), 400
     
     try:
-        # Call the Groq translation function
-        translation = groq_translate(query, from_language, to_language)
-        return jsonify({"translation": translation.dict()}), 200
+        # Use OpenAI's ChatCompletion for translation
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": f"Translate the following text from {from_language} to {to_language}."},
+                {"role": "user", "content": query}
+            ]
+        )
+        translate_text = response.choices[0].message['content']
+
+        return jsonify({"translated_text": translate_text}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
